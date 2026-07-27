@@ -1,0 +1,190 @@
+"name","time","western","ex_colonizer","major_power"
+"Afghanistan_gov",0,0,0,0
+"Angola_gov",0,0,0,0
+"Antigua and Barbuda_gov",0,0,0,0
+"Argentina_gov",0,0,0,0
+"Armenia_gov",0,0,0,0
+"Australia_gov",0,1,0,0
+"Austria_gov",0,1,0,0
+"Belarus_gov",0,0,0,0
+"Belgium_gov",0,1,1,0
+"Benin_gov",0,0,0,0
+"Bolivia_gov",0,0,0,0
+"Brazil_gov",0,0,0,0
+"Burkina Faso_gov",0,0,0,0
+"Canada_gov",0,1,0,0
+"Chile_gov",0,0,0,0
+"Colombia_gov",0,0,0,0
+"Croatia_gov",0,0,0,0
+"Czechia_gov",0,0,0,0
+"Denmark_gov",0,1,0,0
+"Ecuador_gov",0,0,0,0
+"El Salvador_gov",0,0,0,0
+"Ethiopia_gov",0,0,0,0
+"Finland_gov",0,1,0,0
+"France_gov",0,1,1,1
+"Germany_gov",0,1,1,0
+"Germany_gov",44.978,1,1,1
+"Guatemala_gov",0,0,0,0
+"Hungary_gov",0,0,0,0
+"India_gov",0,0,0,0
+"Indonesia_gov",0,0,0,0
+"Iraq_gov",0,0,0,0
+"Ireland_gov",0,1,0,0
+"Israel_gov",0,1,0,0
+"Italy_gov",0,1,1,0
+"Jamaica_gov",0,0,0,0
+"Japan_gov",0,1,1,0
+"Japan_gov",44.978,1,1,1
+"Kenya_gov",0,0,0,0
+"Latvia_gov",0,0,0,0
+"Lithuania_gov",0,0,0,0
+"Luxembourg_gov",0,1,0,0
+"Mexico_gov",0,0,0,0
+"Monaco_gov",0,1,0,0
+"Montenegro_gov",0,0,0,0
+"Myanmar_gov",0,0,0,0
+"Nepal_gov",0,0,0,0
+"Netherlands_gov",0,1,1,0
+"New Zealand_gov",0,1,0,0
+"Nigeria_gov",0,0,0,0
+"North Korea_gov",0,0,0,0
+"Norway_gov",0,1,0,0
+"Pakistan_gov",0,0,0,0
+"Paraguay_gov",0,0,0,0
+"Peru_gov",0,0,0,0
+"Poland_gov",0,0,0,0
+"Portugal_gov",0,1,1,0
+"Qatar_gov",0,0,0,0
+"Russia_gov",0,0,1,1
+"Serbia_gov",0,0,0,0
+"Sierra Leone_gov",0,0,0,0
+"Slovakia_gov",0,0,0,0
+"Solomon Islands_gov",0,0,0,0
+"South Africa_gov",0,0,0,0
+"South Korea_gov",0,0,0,0
+"South Sudan_gov",0,0,0,0
+"Spain_gov",0,1,1,0
+"Sri Lanka_gov",0,0,0,0
+"Suriname_gov",0,0,0,0
+"Sweden_gov",0,1,0,0
+"Switzerland_gov",0,1,0,0
+"Taiwan_gov",0,0,0,0
+"Timor-Leste_gov",0,0,0,0
+"Togo_gov",0,0,0,0
+"Turkey_gov",0,0,0,0
+"Uganda_gov",0,0,0,0
+"United Kingdom_gov",0,1,1,1
+"United States_gov",0,1,1,1
+"Yemen_gov",0,0,0,0
+"Afghanistan_min",0,0,0,0
+"Angola_min",0,0,0,0
+"Antigua and Barbuda_min",0,0,0,0
+"Argentina_min",0,0,0,0
+"Armenia_min",0,0,0,0
+"Australia_min",0,0,0,0
+"Austria_min",0,0,0,0
+"Bangladesh_gov",0,0,0,0
+"Bangladesh_min",0,0,0,0
+"Belarus_min",0,0,0,0
+"Belgium_min",0,0,0,0
+"Benin_min",0,0,0,0
+"Bolivia_min",0,0,0,0
+"Bosnia and Herzegovina_gov",0,0,0,0
+"Bosnia and Herzegovina_min",0,0,0,0
+"Brazil_min",0,0,0,0
+"Burkina Faso_min",0,0,0,0
+"Canada_min",0,0,0,0
+"Chile_min",0,0,0,0
+"China_gov",0,0,0,0
+"China_min",0,0,0,0
+"Colombia_min",0,0,0,0
+"comfort_women",0,0,0,0
+"Congo_gov",0,0,0,0
+"Congo_min",0,0,0,0
+"Croatia_min",0,0,0,0
+"Czechia_min",0,0,0,0
+"Democratic Republic of the Congo_gov",0,0,0,0
+"Democratic Republic of the Congo_min",0,0,0,0
+"Denmark_min",0,0,0,0
+"Ecuador_min",0,0,0,0
+"El Salvador_min",0,0,0,0
+"Ethiopia_min",0,0,0,0
+"Finland_min",0,0,0,0
+"France_min",0,0,0,0
+"Germany_min",0,0,0,0
+"Ghana_gov",0,0,0,0
+"Ghana_min",0,0,0,0
+"Greece_gov",0,0,0,0
+"Greece_min",0,0,0,0
+"Guatemala_min",0,0,0,0
+"holocaust_victims",0,0,0,0
+"Hungary_min",0,0,0,0
+"India_min",0,0,0,0
+"Indonesia_min",0,0,0,0
+"Iraq_min",0,0,0,0
+"Ireland_min",0,0,0,0
+"Israel_min",0,0,0,0
+"Italy_min",0,0,0,0
+"Jamaica_min",0,0,0,0
+"Japan_min",0,0,0,0
+"Jordan_gov",0,0,0,0
+"Jordan_min",0,0,0,0
+"Kenya_min",0,0,0,0
+"Kuwait_gov",0,0,0,0
+"Kuwait_min",0,0,0,0
+"Latvia_min",0,0,0,0
+"Libya_gov",0,0,0,0
+"Libya_min",0,0,0,0
+"Lithuania_min",0,0,0,0
+"Luxembourg_min",0,0,0,0
+"Mexico_min",0,0,0,0
+"Monaco_min",0,0,0,0
+"Montenegro_min",0,0,0,0
+"Myanmar_min",0,0,0,0
+"Namibia_gov",0,0,0,0
+"Namibia_min",0,0,0,0
+"Nepal_min",0,0,0,0
+"Netherlands_min",0,0,0,0
+"New Zealand_min",0,0,0,0
+"Nigeria_min",0,0,0,0
+"North Korea_min",0,0,0,0
+"Norway_min",0,0,0,0
+"other_multilateral",0,0,0,0
+"Pakistan_min",0,0,0,0
+"Paraguay_min",0,0,0,0
+"Peru_min",0,0,0,0
+"Poland_min",0,0,0,0
+"Portugal_min",0,0,0,0
+"Qatar_min",0,0,0,0
+"Russia_min",0,0,0,0
+"Rwanda_gov",0,0,0,0
+"Rwanda_min",0,0,0,0
+"Samoa_gov",0,0,0,0
+"Samoa_min",0,0,0,0
+"Serbia_min",0,0,0,0
+"Sierra Leone_min",0,0,0,0
+"slavery_victims",0,0,0,0
+"Slovakia_min",0,0,0,0
+"Solomon Islands_min",0,0,0,0
+"South Africa_min",0,0,0,0
+"South Korea_min",0,0,0,0
+"South Sudan_min",0,0,0,0
+"Spain_min",0,0,0,0
+"Sri Lanka_min",0,0,0,0
+"State of Palestine_gov",0,0,0,0
+"State of Palestine_min",0,0,0,0
+"Suriname_min",0,0,0,0
+"Sweden_min",0,0,0,0
+"Switzerland_min",0,0,0,0
+"Taiwan_min",0,0,0,0
+"Timor-Leste_min",0,0,0,0
+"Togo_min",0,0,0,0
+"Turkey_min",0,0,0,0
+"Uganda_min",0,0,0,0
+"United Kingdom_min",0,0,0,0
+"United States_min",0,0,0,0
+"Vietnam_gov",0,0,0,0
+"Vietnam_min",0,0,0,0
+"wwii_asia_victims",0,0,0,0
+"Yemen_min",0,0,0,0
