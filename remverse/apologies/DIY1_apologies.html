@@ -11,7 +11,7 @@
 
 <meta name="author" content="Relational Event Modeling workshop" />
 
-<meta name="date" content="2026-07-27" />
+<meta name="date" content="2026-07-29" />
 
 <title>DIY 1 — Modeling a stream of political apologies with a relational event model</title>
 
@@ -355,7 +355,7 @@ apologies with a relational event model</h1>
 <h3 class="subtitle">remverse hands-on: manual risk sets, memory, and
 diagnostics</h3>
 <h4 class="author">Relational Event Modeling workshop</h4>
-<h4 class="date">2026-07-27</h4>
+<h4 class="date">2026-07-29</h4>
 
 </div>
 
@@ -572,7 +572,7 @@ plot(reh)     # a quick descriptive of the apology stream</code></pre>
 <h2>Step 2 — choose effects and compute statistics</h2>
 <p>Endogenous <strong>mechanisms</strong>: do apologies cluster, get
 reciprocated, come in bursts? (you can check their exact interpretation
-by running )</p>
+by running <code>?recencySendSender</code>)</p>
 <pre class="r"><code>tie_effects1 &lt;- ~
   inertia(scaling = &quot;std&quot;) +                         # are apologies repeated?
   reciprocity(scaling = &quot;std&quot;) +                     # are apologies reciprocated?
