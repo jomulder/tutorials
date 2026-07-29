@@ -11,7 +11,7 @@
 
 <meta name="author" content="Relational Event Modeling workshop" />
 
-<meta name="date" content="2026-07-27" />
+<meta name="date" content="2026-07-29" />
 
 <title>DIY 2 — Militarized interstate disputes as a relational event model</title>
 
@@ -355,7 +355,7 @@ a relational event model</h1>
 <h3 class="subtitle">remverse hands-on: tie &amp; actor models, moving
 windows, event types, and duration</h3>
 <h4 class="author">Relational Event Modeling workshop</h4>
-<h4 class="date">2026-07-27</h4>
+<h4 class="date">2026-07-29</h4>
 
 </div>
 
@@ -433,8 +433,9 @@ symmetrize &lt;- function(d) {
 <p>Tie-oriented, interval timing, <strong>active-saturated</strong> risk
 set (every ordered pair of the 19 observed states is at risk at every
 time point):</p>
-<pre class="r"><code>reh &lt;- remify(el[, c(&quot;t&quot;, &quot;actor1&quot;, &quot;actor2&quot;)],
-              directed = TRUE, model = &quot;tie&quot;, riskset = &quot;active_saturated&quot;)
+<pre class="r"><code>reh &lt;- remify(el[, c(&quot;time&quot;, &quot;actor1&quot;, &quot;actor2&quot;)],
+              directed = TRUE, model = &quot;tie&quot;, riskset = &quot;active_saturated&quot;,
+              time_units = &quot;years&quot;)
 reh
 plot(reh)</code></pre>
 </div>
@@ -492,7 +493,7 @@ actors or drop the offending effect.</p>
   inertia(scaling = &quot;std&quot;):reciprocity(scaling = &quot;std&quot;)   # do the two reinforce?
 
 stats &lt;- remstats(reh, tie_effects = tie_effects, first = 50)
-fit   &lt;- remstimate(reh, stats, method = &quot;MLE&quot;)
+fit   &lt;- remstimate(reh, stats)
 summary(fit)</code></pre>
 <p>Interpretation runs through the rate: a positive
 <code>tie_contiguity</code> means bordering states produce disputes at a
@@ -504,7 +505,7 @@ disputes but are <em>targeted</em> less.</p>
 <div id="step-4-diagnostics" class="section level2">
 <h2>Step 4 — diagnostics</h2>
 <pre class="r"><code>diag &lt;- diagnostics(fit, reh, stats)
-diag$recall$summary          # mean relative rank + proportion in the top 5%
+print(diag)
 plot(diag)
 head(diag$surprise_offenders)   # the disputes the model least expected</code></pre>
 <hr />
@@ -596,9 +597,11 @@ base rates.</p>
 weight</strong> — one process, but more intense events count more toward
 the endogenous statistics:</p>
 <pre class="r"><code>el$weight &lt;- as.numeric(el$hihost)                 # 2..5
-reh_w &lt;- remify(cbind(el[, c(&quot;t&quot;,&quot;actor1&quot;,&quot;actor2&quot;)], weight = el$weight),
+reh_w &lt;- remify(el[, c(&quot;time&quot;,&quot;actor1&quot;,&quot;actor2&quot;,&quot;hihost&quot;)], event_weight = &quot;hihost&quot;,
                 directed = TRUE, model = &quot;tie&quot;, riskset = &quot;active_saturated&quot;)
-# ...then remstats/remstimate as before.</code></pre>
+print(reh_w)</code></pre>
+<p>Subsequently, the same models as above could be fitted and
+assessed.</p>
 <p><strong>Type or weight is a modeling choice</strong>: a <em>type</em>
 splits the stream into kinds of event (escalation <em>between</em>
 kinds); a <em>weight</em> keeps one stream and scales intensity. Let
@@ -606,14 +609,14 @@ your research question decide.</p>
 <hr />
 </div>
 </div>
-<div id="extension-events-with-duration" class="section level1">
-<h1>Extension: events with duration</h1>
+<div id="extension-modeling-event-duration" class="section level1">
+<h1>Extension: modeling event duration</h1>
 <p>Every event so far is an instant. But disputes <strong>last</strong>
 — the edge list carries an <code>end_date</code>, so each event has a
 <strong>duration</strong>:</p>
-<pre class="r"><code>el$duration &lt;- as.numeric(el$end_date - el$time)   # dispute length in days
-summary(el$duration)
-hist(el$duration, breaks = 40, main = &quot;Dispute durations (days)&quot;, xlab = &quot;days&quot;)</code></pre>
+<pre class="r"><code>event_duration &lt;- as.numeric(el$end_date - el$time)/365   # dispute length in years
+summary(event_duration)
+hist(event_duration, breaks = 40, main = &quot;Dispute durations (years)&quot;, xlab = &quot;years&quot;)</code></pre>
 <p>Duration separates two questions the instantaneous REM merges:</p>
 <ol style="list-style-type: decimal">
 <li><strong>Onset</strong> — when does the <em>next</em> dispute start?
@@ -623,63 +626,115 @@ hist(el$duration, breaks = 40, main = &quot;Dispute durations (days)&quot;, xlab
 as the outcome and the same covariates as predictors (hostility,
 capability, alliance, …).</li>
 </ol>
-<p>A third, structural use: an <strong>active dispute can gate the risk
-set</strong> — a pair already at war is not at risk of <em>starting</em>
-a new dispute until the current one resolves. Sketch of the
-plumbing:</p>
-<pre class="r"><code># For each candidate event time t, a dyad is &quot;busy&quot; if one of its disputes is
-# still open:  time &lt;= t &lt;= end_date.  Such dyads can be removed from the risk
-# set at t (e.g. via a time-varying manual risk set), so the model explains
-# NEW onsets rather than re-counting ongoing fighting.
-#
-# A minimal companion duration model (base R), covariates left as an exercise:
-# fit_dur &lt;- survival::survreg(survival::Surv(duration + 1) ~ hihost, data = el)
-# summary(fit_dur)</code></pre>
-<p>We keep this conceptual today: the point is that “who acts on whom,
-when, and <strong>for how long</strong>” is a natural extension, and MID
-data already contain everything you need to explore it.</p>
+<p>A RuREM analysis can be performed in a similar fashion using
+<code>remverse</code> as above. The end time of an event needs to have
+column name <code>end_time</code>, another option is have have a column
+name named <code>duration</code> containing the duration of events. For
+the MID data, we assume that the initiator of the dispute is also the
+ender of the dispute; thus, we assume a directed end of events.</p>
+<pre class="r"><code>colnames(el)[4] &lt;- &quot;end_time&quot;
+reh_dur &lt;- remify(el[, c(&quot;time&quot;, &quot;actor1&quot;, &quot;actor2&quot;, &quot;end_time&quot;)],
+           directed = TRUE, model = &quot;tie&quot;, riskset = &quot;active_saturated&quot;,
+           duration = TRUE, dur_directed_end = TRUE, time_units = &quot;years&quot;)
+reh_dur
+plot(reh_dur)</code></pre>
+<p>We specify models for starting and ending a dispute.</p>
+<pre class="r"><code>start_effects &lt;- ~
+  inertia(scaling = &quot;std&quot;) +                       # repeat disputes with the same target
+  reciprocity(scaling = &quot;std&quot;) +                   # fight back
+  otp(scaling = &quot;std&quot;) +                           # transitivity: enemy-of-my-enemy structure
+  difference(&quot;dem&quot;, attr_actors = dem) +           # regime-type distance drives conflict?
+  tie(&quot;contiguity&quot;, attr_dyads = contig)           # do neighbours fight more?
+end_effects &lt;- ~
+  inertia(scaling = &quot;std&quot;) +                       # repeat disputes with the same target
+  reciprocity(scaling = &quot;std&quot;) +                   # fight back
+  otp(scaling = &quot;std&quot;) +                           # transitivity: enemy-of-my-enemy structure
+  difference(&quot;dem&quot;, attr_actors = dem) +           # regime-type distance drives conflict?
+  tie(&quot;contiguity&quot;, attr_dyads = contig)           # do neighbours fight more?
+
+stats_dur &lt;- remstats(reh_dur, start_effects = start_effects, 
+                  end_effects = end_effects,
+                  first = 50)
+fit_dur   &lt;- remstimate(reh_dur, stats_dur)
+summary(fit_dur)</code></pre>
+<p>The results show how the past affects the rates at which military
+disputes start and end. The positive <code>inertia</code> effect on
+starting suggests a country is more likely to initiate a dispute against
+a target it has attacked before. The negative <code>reciprocity</code>
+effect on ending suggests that a country that has often been attacked by
+another is slower to end the ongoing dispute. The positive
+<code>tie_contiguity</code> effect on starting indicates that
+neighboring countries are more likely to engage in disputes than
+non-neighboring ones, while its negative effect on ending indicates that
+disputes between neighbors tend to last longer. These are effects on the
+rate of starting and ending; as the diagnostics below show, several are
+clearly significant yet add little predictive discrimination —
+significance and recall answer different questions.</p>
+<p>Finally, we check some diagnostics to assess the fit of the
+DuREM:</p>
+<pre class="r"><code>diag_dur &lt;- diagnostics(fit_dur,reh_dur,stats_dur)
+print(diag_dur)
+plot(diag_dur)</code></pre>
+<p>The joint recall (median rank 0.94, prob ratio 9.2) should be
+interpreted with caution. The joint risk set at each time point combines
+the dormant dyads that could start a dispute with the ongoing disputes
+that could end. Because an ongoing dispute has a higher baseline hazard
+of ending than a dormant dyad has of starting (compare
+<code>baseline.end</code> and <code>baseline.start</code>), ending
+events tend to receive high ranks regardless of the exact choice of the
+<code>end_effects</code>. The separate start and end recall are more
+informative, since each event is ranked only within its own risk set.
+The start recall (prob ratio 1.6) indicates a modest effect of the
+covariates on which dyad initiates a dispute, while the end recall (prob
+ratio 1.1) is close to chance, suggesting that the covariates provide
+little information about which ongoing dispute is likely to end
+next.</p>
 <hr />
 </div>
 <div id="exercises" class="section level1">
 <h1>Exercises</h1>
-<p>Predict first, then run.</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Risk set.</strong> Refit the tie model with
-<code>riskset = &quot;active&quot;</code> instead of
-<code>active_saturated</code>. Which endogenous estimates move, and
-why?</p></li>
-<li><p><strong>Proportional hazards.</strong> From the moving-window
-plot, pick the <em>least</em> stable effect. Propose a substantive
-reason (a war, a regime change, the end of the Cold War) and describe
-how you would test it.</p></li>
-<li><p><strong>Scaling.</strong> Change <code>scaling = &quot;std&quot;</code> to
-<code>&quot;prop&quot;</code> for <code>inertia</code> and
-<code>reciprocity</code>. How does interpretation change?</p></li>
-<li><p><strong>Escalation.</strong> Compare
-<code>consider_type = &quot;separate&quot;</code> vs <code>&quot;interact&quot;</code> for
-<code>inertia</code> on <code>hihost</code>. Which better captures
-ratcheting, and what does the sign tell you?</p></li>
-<li><p><strong>Full data.</strong> Swap <code>edgelist_subset.csv</code>
-for <code>edgelist_full.csv</code> (4,670 events, all states). What
-breaks, what gets slower, and which effects sharpen?</p></li>
+<li><p><strong>Compare models.</strong> Consider one of the above
+example analyses. Try different models, e.g., models with additional
+sets of effects, or models which only contain the endogenous effects, or
+only the exogenous effects. Compare model fit.</p></li>
+<li><p><strong>Risk set.</strong> Try different risksets and check how
+this affects the results.</p></li>
+<li><p><strong>Memory.</strong> The <code>full</code> memory was used
+implyig equal weight for all past events regardless of their transpired
+times. Is this realistic? Instead try an exponential <code>decay</code>
+function for the memory retention. Try different half-life parameters
+and compare their model fit.</p></li>
+<li><p><strong>Memory.</strong> The duration parameters
+<code>psi_start</code> and <code>psi_end</code> are set to 1 by default.
+This implies a linear increase of the weight as function of the duration
+of past events. Try different duration parameters and compare their
+fit.</p></li>
+<li><p><strong>Full data.</strong> Instead of working with the subset
+<code>edgelist_subset.csv</code>, try the full MID data set
+<code>edgelist_full.csv</code> (4,670 events, all states). Try to
+different REMs for the full sequence.</p></li>
 </ol>
-<p>Report coefficients as rate multipliers, the recall summary, and a
-sentence of interpretation for each.</p>
 <hr />
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
 <p>Butts, C. T. (2008). A relational event framework for social action.
 <em>Sociological Methodology, 38</em>(1), 155–200.</p>
-<p>Stadtfeld, C., &amp; Block, P. (2017). Interactions, actors, and
-time: Dynamic network actor models for relational events.
-<em>Sociological Science, 4</em>, 318–352.</p>
+<p>Lakdawala, R., Leenders, R., Ejbye-Ernst, &amp; Mulder, J. A joint
+model for the occurrence and duration of relational events.</p>
+<p>Lakdawala, R., Leenders, R. , &amp; Mulder, J. (2026). Not all bonds
+are created equal: dyadic latent class models for relational event data.
+<em>Social Networks, 87</em>, 135–151.</p>
 <p>Meijerink-Bosman, M., Back, M., Geukes, K., Leenders, R., &amp;
 Mulder, J. (2023). Discovering trends of social interaction behavior
 over time: An introduction to relational event modeling. <em>Behavior
 Research Methods, 55</em>, 997–1023.</p>
 <p>Singer, J. D. (1972). The “Correlates of War” project: Interim report
 and rationale. <em>World Politics, 24</em>(2), 243–270.</p>
+<p>Stadtfeld, C., &amp; Block, P. (2017). Interactions, actors, and
+time: Dynamic network actor models for relational events.
+<em>Sociological Science, 4</em>, 318–352.</p>
 </div>
 
 
