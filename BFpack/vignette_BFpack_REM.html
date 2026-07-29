@@ -11,7 +11,7 @@
 
 <meta name="author" content="Joris Mulder" />
 
-<meta name="date" content="2026-07-21" />
+<meta name="date" content="2026-07-29" />
 
 <title>Testing Scientific Expectations under Relational Event Models with BFpack</title>
 
@@ -353,7 +353,7 @@ display: none;
 <h1 class="title toc-ignore">Testing Scientific Expectations under
 Relational Event Models with BFpack</h1>
 <h4 class="author">Joris Mulder</h4>
-<h4 class="date">2026-07-21</h4>
+<h4 class="date">2026-07-29</h4>
 
 </div>
 
@@ -443,7 +443,8 @@ el$time &lt;- as.Date(el$time)
 el &lt;- el[order(el$time), ]</code></pre>
 <p>The sequence contains roughly <strong>4,670 directed events</strong>
 at <strong>2,429 unique time points</strong> (several disputes can fall
-on the same date), spanning the post-war period.</p>
+on the same date), spanning the post-war period. A relational event
+analysis of these data was presented by Lakdawala et al. (2026).</p>
 <div id="build-the-relational-event-history" class="section level2">
 <h2>Build the relational event history</h2>
 <p><code>remify()</code> turns the raw edgelist into a relational event
@@ -462,17 +463,23 @@ reh_tie          # a short summary; reh_tie$M is the number of unique time point
 scale. The two we will test are <strong>regime-type dummies</strong>,
 built from each state’s Polity score <code>dem</code> <em>in each
 year</em>, so they <strong>vary over time</strong>:</p>
-<pre class="r"><code>ac &lt;- list(major    = cov(&quot;cov_major.csv&quot;),
+<pre class="r"><code>origin   &lt;- min(el$time)                                   # first event = time 0
+to_years &lt;- function(d) as.numeric(as.Date(d) - origin) / 365.25
+
+ac &lt;- list(major    = cov(&quot;cov_major.csv&quot;),
            dem      = cov(&quot;cov_dem.csv&quot;),
            religion = cov(&quot;cov_religion.csv&quot;))
 
 maj &lt;- ac$major                                              # &#39;major&#39;  (0/1)
+maj$time  &lt;- to_years(maj$date)
 
 reg &lt;- ac$dem
+reg$time  &lt;- to_years(reg$date)
 reg$democracy &lt;- as.integer(reg$dem &gt;=  6)                   # democracy dummy
 reg$autocracy &lt;- as.integer(reg$dem &lt;= -6)                   # autocracy dummy
 
-rel &lt;- ac$religion                                           # &#39;islam&#39; / &#39;christianity&#39;</code></pre>
+rel &lt;- ac$religion                                           # &#39;islam&#39; / &#39;christianity&#39;
+rel$time  &lt;- to_years(rel$date)</code></pre>
 <blockquote>
 <p><strong>Read the dummies carefully.</strong>
 <code>democracy = 1</code> when Polity <span class="math inline">\(\ge
@@ -502,7 +509,7 @@ controls (standardized).</p>
   send(&quot;islam&quot;,        attr_actors = rel) +   # -&gt; send_islam
   send(&quot;christianity&quot;, attr_actors = rel)     # -&gt; send_christianity
 
-training   &lt;- 500                              # burn-in for the endogenous stats
+training   &lt;- 500                             # burn-in for the endogenous stats
 stats_tie  &lt;- remstats(reh_tie, tie_effects = tie_effects, first = training)
 fit_tie    &lt;- remstimate(reh_tie, stats_tie)
 summary(fit_tie)</code></pre>
@@ -641,7 +648,8 @@ colnames(php_mat) &lt;- c(&quot;H1: none = 0&quot;, &quot;H2: dem&lt;0&lt;auto&q
 <p>Plot the posterior probabilities against the window mid-point date,
 and — so the shifts can be read against the effect sizes that drive them
 — the underlying estimates on the same time axis:</p>
-<pre class="r"><code>par(mfrow = c(2, 1))
+<pre class="r"><code>par(mar = c(1, 1, 1, 1))
+par(mfrow = c(2, 1))
 
 matplot(mid_time, php_mat, type = &quot;l&quot;, lty = 1, lwd = 2, col = seq_len(5),
         ylim = c(0, 1), xaxt = &quot;n&quot;,
@@ -674,28 +682,32 @@ replacing <code>hyp_gov</code> with each of the following and re-running
 Step 4 (and, if you like, the moving window). Predict the outcome first,
 then check.</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Is autocratic aggression <em>stronger</em> than any
-democratic effect?</strong> Compare the <em>relative magnitudes</em>
-directly:</p>
+<li><p><strong>Is autocratic aggression <em>stronger</em>,
+<em>equal</em>, or <em>lower</em> than democratic effect?</strong> Test
+the <em>relative magnitudes</em> directly:</p>
 <pre class="r"><code>hyp_mag &lt;- &quot;send_democracy &lt; send_autocracy;
             send_democracy = send_autocracy;
-            send_democracy &gt; send_autocracy&quot;
-BF_mag &lt;- BF(x = est, Sigma = fit_tie$vcov, n = fit_tie$df.null,
-             hypothesis = hyp_mag)
-BF_mag$PHP_confirmatory</code></pre></li>
-<li><p><strong>A different mechanism.</strong> Do <em>major powers</em>
-initiate more than the baseline, and does that swamp regime type? Test
-e.g. <code>&quot;send_major &gt; send_autocracy &gt; 0&quot;</code> against
-<code>&quot;send_major = send_autocracy &gt; 0&quot;</code>.</p></li>
-<li><p><strong>An “about-equality” (interval) hypothesis.</strong> Ask
-whether democracy and autocracy effects are <em>practically
-equivalent</em> rather than exactly equal, using an interval constraint
-such as
-<code>&quot;abs(send_democracy - send_autocracy) &lt; 0.2&quot;</code>.</p></li>
-<li><p><strong>Prior sensitivity.</strong> Re-run test 1 of this
-tutorial with <code>prior.hyp.conf</code> weighting the null more
-heavily. How much does the posterior probability of H2 move, and why do
-the Bayes factors stay the same?</p></li>
+            send_democracy &gt; send_autocracy&quot;</code></pre></li>
+</ol>
+<p>Perform the test. Which prior probabilities for the hypotheses did
+you use?</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p><strong>Different mechanisms.</strong> Can we test the two
+endogenous effects <code>inertia</code> and <code>reciprocity</code>
+directly against each other (in other words are they on the same
+scale?). Formulate different hypotheses on these effects and test
+them.</p></li>
+<li><p><strong>An “approximate-equality” (interval) hypothesis.</strong>
+Ask whether democracy and autocracy effects are <em>practically
+equivalent</em> rather than exactly equal, using an interval constraint.
+For instance, we could test that the difference does not exceed 0.2.
+Although the use of <code>abs()</code> is not allowed in the
+<code>hypothesis</code> argument, it is possible to write, say,
+<code>abs(send_democracy - send_autocracy) &lt; 0.2</code>, as two
+one-sided constraints which both need to be satisfied:
+<code>send_democracy - send_autocracy &lt; 0.2 &amp; send_autocracy - send_democracy &lt; 0.2</code>.
+Try this. Compare the result with the test of the exact equality of the
+two effects.</p></li>
 </ol>
 <p>For each, report the Bayes factors <em>and</em> the posterior
 probabilities, and state the prior probabilities you used.</p>
@@ -733,6 +745,9 @@ of hypotheses.</p>
 fractional Bayes factors: A general method for testing informative
 hypotheses. <em>British Journal of Mathematical and Statistical
 Psychology, 71</em>(2), 229–261.</p>
+<p>Lakdawala, R., Leenders, R., &amp; Mulder, J. (2026). Not all bonds
+are created equal: Dyadic latent class models for relational event data.
+<em>Social Networks, 87</em>, 135–151.</p>
 <p>Meijerink-Bosman, M., Back, M., Geukes, K., Leenders, R., &amp;
 Mulder, J. (2023). Discovering trends of social interaction behavior
 over time: An introduction to relational event modeling. <em>Behavior
@@ -742,8 +757,8 @@ evolution of interaction behavior in social networks: A dynamic
 relational event approach for real-time analysis. <em>Chaos, Solitons
 &amp; Fractals, 119</em>, 73–85.</p>
 <p>Mulder, J., et al. (2021). BFpack: Flexible Bayes factor testing of
-scientific expectations in R. <em>Journal of Statistical
-Software.</em></p>
+scientific expectations in R. <em>Journal of Statistical Software,</em>
+1–63.</p>
 <p>Singer, J. D. (1972). The “Correlates of War” project: Interim report
 and rationale. <em>World Politics, 24</em>(2), 243–270.</p>
 <hr />
